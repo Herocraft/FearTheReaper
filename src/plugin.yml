@@ -1,0 +1,9 @@
+name: FearTheReaper
+version: 0.1.0
+main: com.herocraftonline.fearthereaper.FearTheReaper
+author: Sleaker
+commands:
+  graveyard:
+    description: Graveyard Commands
+    usage: /<command> <list | add | delete | tp | closest>
+    aliases: ['gy']
