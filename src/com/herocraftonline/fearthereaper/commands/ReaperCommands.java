@@ -12,11 +12,11 @@ import com.herocraftonline.fearthereaper.spawnpoint.Spawn;
 import com.herocraftonline.fearthereaper.spawnpoint.SpawnPoint;
 import com.herocraftonline.fearthereaper.utils.GraveyardUtils;
 
-public class GraveyardCommads implements CommandExecutor {
+public class ReaperCommands implements CommandExecutor {
     public final FearTheReaper plugin;
     private static String[] arg;
 
-    public GraveyardCommads(FearTheReaper instance) {
+    public ReaperCommands(FearTheReaper instance) {
         this.plugin = instance;
     }
 
@@ -147,7 +147,7 @@ public class GraveyardCommads implements CommandExecutor {
 
         if ((graveyardCommand("add", sender)) && (args.length > 1)) {
             String pointname = GraveyardUtils.makeString(args);
-            Spawn newpoint = new Spawn(pointname, player);
+            Spawn newpoint = new Spawn(pointname, player, plugin);
             SpawnPoint.save(newpoint);
             SpawnPoint.addSpawnPoint(newpoint);
             commandTop(sender);

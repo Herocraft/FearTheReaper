@@ -1,17 +1,16 @@
 package com.herocraftonline.fearthereaper.spawnpoint;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
 import com.herocraftonline.fearthereaper.FearTheReaper;
@@ -19,53 +18,29 @@ import com.herocraftonline.fearthereaper.FearTheReaper;
 public class SpawnPoint {
     public static void loadAllPoints() {
         for (File file : FearTheReaper.pointsDirectory.listFiles())
-            loadSpawnPoint(file.getPath());
+            loadSpawnPoint(file);
     }
 
     public static void addSpawnPoint(Spawn point) {
         FearTheReaper.SpawnPointList.put(point.getName(), point);
     }
 
-    public static void loadSpawnPoint(String filename) {
-        Properties Points = new Properties();
+    public static void loadSpawnPoint(File file) {
+        Spawn newpoint;
         try {
-            FileReader loadPoint = new FileReader(filename);
-            Points.load(loadPoint);
-            String name = Points.getProperty("Name");
-            String world = Points.getProperty("World");
-            Double PointX = Double.valueOf(Double.parseDouble(Points.getProperty("xpos")));
-            Double PointY = Double.valueOf(Double.parseDouble(Points.getProperty("ypos")));
-            Double PointZ = Double.valueOf(Double.parseDouble(Points.getProperty("zpos")));
-            String Group = Points.getProperty("Group");
-            String Message = Points.getProperty("Message", name);
-            Points.clear();
-            loadPoint.close();
-            FearTheReaper.log.info("[Graveyard] Loading: " + world + "/" + name + ": " + PointX + ", " + PointY + ", " + PointZ);
-            Spawn newpoint = new Spawn(name, Bukkit.getServer().getWorld(world), PointX.doubleValue(), PointY.doubleValue(), PointZ.doubleValue(), Group, Message);
-            FearTheReaper.SpawnPointList.put(name, newpoint);
-        }
-        catch (Exception e) {
-            System.out.println("[FearTheReaper] - Unable to load Spawn points, or no Points to load!");
+            newpoint = Spawn.loadConfig(file);
+            FearTheReaper.SpawnPointList.put(newpoint.getName(), newpoint);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidConfigurationException e) {
+            e.printStackTrace();
         }
     }
 
-    public static void save(Spawn point) {
-        Properties pointProperties = new Properties();
-        try {
-            pointProperties.setProperty("Name", point.getName());
-            pointProperties.setProperty("World", point.getWorld().getName());
-            pointProperties.setProperty("xpos", point.getX() + "");
-            pointProperties.setProperty("ypos", point.getY() + "");
-            pointProperties.setProperty("zpos", point.getZ() + "");
-            pointProperties.setProperty("Group", point.getGroup());
-            pointProperties.setProperty("Message", point.getSpawnMessage());
-            FileOutputStream fstream = new FileOutputStream(FearTheReaper.pointsDirectory + point.getName() + ".cfg");
-            pointProperties.store(fstream, "Spawn Point File");
-            fstream.close();
-        }
-        catch (Exception e) {
-            System.out.println("[FearTheReaper] - Unable to save the point!");
-        }
+    public static boolean save(Spawn point) {
+        return point.save();
     }
 
     public static Spawn get(String name) {

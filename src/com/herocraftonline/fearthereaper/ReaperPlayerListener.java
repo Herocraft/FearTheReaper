@@ -7,10 +7,10 @@ import com.herocraftonline.fearthereaper.spawnpoint.Spawn;
 import com.herocraftonline.fearthereaper.spawnpoint.SpawnPoint;
 import com.herocraftonline.fearthereaper.utils.GraveyardUtils;
 
-public class GraveyardPlayerListener extends PlayerListener {
+public class ReaperPlayerListener extends PlayerListener {
     public static FearTheReaper plugin;
 
-    public GraveyardPlayerListener(FearTheReaper instance)
+    public ReaperPlayerListener(FearTheReaper instance)
     {
         plugin = instance;
     }

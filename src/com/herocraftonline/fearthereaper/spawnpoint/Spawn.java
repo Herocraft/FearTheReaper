@@ -1,43 +1,69 @@
 package com.herocraftonline.fearthereaper.spawnpoint;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
-public class Spawn {
-    private String name;
+public class Spawn extends YamlConfiguration {
+
     private Location location;
-    private String spawngroup;
-    private String spawnmessage;
+    private File spawnFile;
 
-    public Spawn(String string, World world, double x, double y, double z, String group, String message) {
-        this.name = string;
-        this.location = new Location(world, x, y, z);
-        this.spawngroup = group;
-        this.spawnmessage = message;
+    public Spawn() {
+        super();
     }
 
-    public Spawn(String string, Player player) {
-        this.name = string;
+    public Spawn(String name, World world, double x, double y, double z, String group, String message, Plugin plugin) {
+        super();
+        this.set("name", name);
+        this.set("group", group);
+        this.set("message", message);
+        this.location = new Location(world, x, y, z);
+        this.set("x", location.getX());
+        this.set("y", location.getY());
+        this.set("z", location.getZ());
+        this.set("world", location.getWorld().getName());
+        this.spawnFile = new File(plugin.getDataFolder(), name + ".yml");
+        save();
+    }
+
+    public Spawn(String name, Player player, Plugin plugin) {
+        super();
+        this.set("name", name);
         this.location = player.getLocation();
-        this.spawngroup = "all";
-        this.spawnmessage = "none";
+        this.set("x", location.getX());
+        this.set("y", location.getY());
+        this.set("z", location.getZ());
+        this.set("world", location.getWorld().getName());
+        this.set("group", "all");
+        this.set("message", "none");
+        this.spawnFile = new File(plugin.getDataFolder(), name + ".yml");
+        save();
     }
 
     public String getSpawnMessage() {
-        return this.spawnmessage;
+        return this.getString("message");
     }
 
     public String getGroup() {
-        return this.spawngroup;
+        return this.getString("group");
     }
 
     public String getWorldName() {
-        return this.location.getWorld().getName();
+        return this.getString("world");
     }
 
-    public void setSpawnMessage(String message) {
-        this.spawnmessage = message;
+    public boolean setSpawnMessage(String message) {
+        this.set("message", message);
+        return save();
     }
 
     public Location getLocation() {
@@ -45,34 +71,67 @@ public class Spawn {
     }
 
     public String getName() {
-        return this.name;
+        return this.getString("name");
     }
 
-    public void setName(String string) {
-        this.name = string;
+    public boolean setName(String name) {
+        this.set("name", name);
+        return save();
     }
 
-    public void setGroup(String string) {
-        this.spawngroup = string;
+    public boolean setGroup(String spawnGroup) {
+        this.set("group", spawnGroup);
+        return save();
     }
 
-    public void setLocation(Location loc) {
+    public boolean setLocation(Location loc) {
         this.location = loc;
+        this.set("x", loc.getX());
+        this.set("y", loc.getY());
+        this.set("z", loc.getZ());
+        this.set("world", loc.getWorld().getName());
+        return save();
     }
 
     public double getX() {
-        return this.location.getX();
+        return this.getDouble("x");
     }
 
     public double getY() {
-        return this.location.getY();
+        return this.getDouble("y");
     }
 
     public double getZ() {
-        return this.location.getZ();
+        return this.getDouble("z");
     }
 
     public World getWorld() {
         return this.location.getWorld();
+    }
+
+    public boolean save() {
+        try {
+            this.save(spawnFile);
+        } catch (IOException e) {
+            System.out.println("There was an error saving " + getString("name"));
+            return false;
+        }
+        return true;
+    }
+
+    public static Spawn loadConfig(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
+        Spawn spawn = new Spawn();
+        spawn.load(file);
+        return spawn;
+    }
+
+    @Override
+    public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
+        super.load(file);
+        World world = Bukkit.getWorld(this.getString("world"));
+        if (world == null) {
+            throw new InvalidConfigurationException("World could not be detected properly.");
+        }
+        this.location = new Location(world, getX(), getY(), getZ());
     }
 }

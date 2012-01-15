@@ -9,7 +9,7 @@ import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.herocraftonline.fearthereaper.commands.GraveyardCommads;
+import com.herocraftonline.fearthereaper.commands.ReaperCommands;
 import com.herocraftonline.fearthereaper.spawnpoint.Spawn;
 import com.herocraftonline.fearthereaper.spawnpoint.SpawnPoint;
 
@@ -34,16 +34,16 @@ public class FearTheReaper extends JavaPlugin {
         SpawnPoint.loadAllPoints();
 
 
-        getServer().getPluginManager().registerEvent(Type.PLAYER_RESPAWN, new GraveyardPlayerListener(this), Priority.High, this);
+        getServer().getPluginManager().registerEvent(Type.PLAYER_RESPAWN, new ReaperPlayerListener(this), Priority.High, this);
 
         log.info("[" + getDescription().getName() + "] v" + getDescription().getVersion() + " loaded successfully!");
 
-        getCommand("graveyard").setExecutor(new GraveyardCommads(this));
+        getCommand("graveyard").setExecutor(new ReaperCommands(this));
 
     }
 
     public static void reloadConfig(FearTheReaper plugin) {
-        System.out.println("[Graveyard] Reloading config.");
+        System.out.println("[FearTheReaper] - Reloading config.");
         plugin.reloadConfig();
         FearTheReaper.config = plugin.getConfig();
     }
