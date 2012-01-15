@@ -45,7 +45,7 @@ public class SpawnPoint {
             FearTheReaper.SpawnPointList.put(name, newpoint);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("[FearTheReaper] - Unable to load Spawn points, or no Points to load!");
         }
     }
 
@@ -64,8 +64,7 @@ public class SpawnPoint {
             fstream.close();
         }
         catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("[Graveyard] Unable to save the point!");
+            System.out.println("[FearTheReaper] - Unable to save the point!");
         }
     }
 
