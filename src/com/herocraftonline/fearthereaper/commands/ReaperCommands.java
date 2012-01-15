@@ -147,7 +147,7 @@ public class ReaperCommands implements CommandExecutor {
 
         if ((graveyardCommand("add", sender)) && (args.length > 1)) {
             String pointname = GraveyardUtils.makeString(args);
-            Spawn newpoint = new Spawn(pointname, player, plugin);
+            Spawn newpoint = new Spawn(pointname, player);
             SpawnPoint.save(newpoint);
             SpawnPoint.addSpawnPoint(newpoint);
             commandTop(sender);

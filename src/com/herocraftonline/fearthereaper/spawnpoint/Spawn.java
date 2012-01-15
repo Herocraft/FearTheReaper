@@ -10,7 +10,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+
+import com.herocraftonline.fearthereaper.FearTheReaper;
 
 public class Spawn extends YamlConfiguration {
 
@@ -21,7 +22,7 @@ public class Spawn extends YamlConfiguration {
         super();
     }
 
-    public Spawn(String name, World world, double x, double y, double z, String group, String message, Plugin plugin) {
+    public Spawn(String name, World world, double x, double y, double z, String group, String message) {
         super();
         this.set("name", name);
         this.set("group", group);
@@ -31,11 +32,11 @@ public class Spawn extends YamlConfiguration {
         this.set("y", location.getY());
         this.set("z", location.getZ());
         this.set("world", location.getWorld().getName());
-        this.spawnFile = new File(plugin.getDataFolder(), name + ".yml");
+        this.spawnFile = new File(FearTheReaper.pointsDirectory, name + ".yml");
         save();
     }
 
-    public Spawn(String name, Player player, Plugin plugin) {
+    public Spawn(String name, Player player) {
         super();
         this.set("name", name);
         this.location = player.getLocation();
@@ -45,7 +46,7 @@ public class Spawn extends YamlConfiguration {
         this.set("world", location.getWorld().getName());
         this.set("group", "all");
         this.set("message", "none");
-        this.spawnFile = new File(plugin.getDataFolder(), name + ".yml");
+        this.spawnFile = new File(FearTheReaper.pointsDirectory, name + ".yml");
         save();
     }
 
@@ -133,5 +134,6 @@ public class Spawn extends YamlConfiguration {
             throw new InvalidConfigurationException("World could not be detected properly.");
         }
         this.location = new Location(world, getX(), getY(), getZ());
+        this.spawnFile = new File(FearTheReaper.pointsDirectory, this.getName() + ".yml");
     }
 }

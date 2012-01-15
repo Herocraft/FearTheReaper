@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import com.herocraftonline.fearthereaper.FearTheReaper;
 
 public class SpawnPoint {
+    
     public static void loadAllPoints() {
         for (File file : FearTheReaper.pointsDirectory.listFiles())
             loadSpawnPoint(file);
