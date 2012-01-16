@@ -22,7 +22,9 @@ public class ReaperPlayerListener extends PlayerListener {
         if (event.getPlayer().hasPermission("graveyard.closest")) {
             if (SpawnPoint.getAllowedList(event.getPlayer()).size() != 0) {
                 Spawn closest = SpawnPoint.getClosestAllowed(event.getPlayer());
-                if (!closest.getSpawnMessage().equalsIgnoreCase("none")) {
+                if (closest == null) {
+                    return;
+                } else if (!closest.getSpawnMessage().equalsIgnoreCase("none")) {
                     event.getPlayer().sendMessage(closest.getSpawnMessage());
                 }
                 event.setRespawnLocation(closest.getLocation());
