@@ -2,8 +2,16 @@ name: FearTheReaper
 version: 0.1.0-b000
 main: com.herocraftonline.fearthereaper.FearTheReaper
 author: Sleaker
+softdepends: [ dynmap ]
 commands:
   graveyard:
     description: Graveyard Commands
     usage: /<command> <list | add | delete | tp | closest>
     aliases: ['gy']
+permissions:
+  graveyard.closest:
+    default: true
+    description: Spawns a player at the closest spawn point
+  graveyard.spawn.all:
+    description: The default spawn group that all spawns are a part of
+    default: true

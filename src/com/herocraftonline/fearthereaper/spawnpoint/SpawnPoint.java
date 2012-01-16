@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -128,20 +127,6 @@ public class SpawnPoint {
         }
 
         return getClosest(player, allowed);
-    }
-
-    public static Spawn getRandomAllowed(Player player) {
-        List<Spawn> allowed = new ArrayList<Spawn>();
-        for (Spawn point : FearTheReaper.getSpawnList().values()) {
-            if (player.hasPermission(("graveyard.spawn." + point.getGroup()).toLowerCase())) {
-                allowed.add(point);
-            }
-        }
-
-        Random randomGenerator = new Random();
-        int randomInt = randomGenerator.nextInt(allowed.size());
-
-        return allowed.get(randomInt);
     }
 
     public static HashMap<String, Spawn> getWorldList(Player player) {
