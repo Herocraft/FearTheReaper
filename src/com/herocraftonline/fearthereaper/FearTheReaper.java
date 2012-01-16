@@ -7,7 +7,9 @@ import java.util.logging.Logger;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.dynmap.DynmapAPI;
 
 import com.herocraftonline.fearthereaper.commands.ReaperCommands;
 import com.herocraftonline.fearthereaper.spawnpoint.Spawn;
@@ -19,6 +21,7 @@ public class FearTheReaper extends JavaPlugin {
     public static File pointsDirectory;
     public static FileConfiguration config;
     public static HashMap<String, Spawn> SpawnPointList = new HashMap<String, Spawn>();    
+    public static ReaperMarkers markers = null;
     
     public static HashMap<String, Spawn> getSpawnList() {
         return SpawnPointList;
@@ -36,13 +39,16 @@ public class FearTheReaper extends JavaPlugin {
         saveConfig();
         SpawnPoint.loadAllPoints();
 
-
         getServer().getPluginManager().registerEvent(Type.PLAYER_RESPAWN, new ReaperPlayerListener(this), Priority.High, this);
 
         log.info("[" + getDescription().getName() + "] v" + getDescription().getVersion() + " loaded successfully!");
 
         getCommand("graveyard").setExecutor(new ReaperCommands(this));
 
+        Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
+        if (dm != null) {
+            markers = new ReaperMarkers(this, (DynmapAPI) dm);
+        }
     }
 
     public static void reloadConfig(FearTheReaper plugin) {

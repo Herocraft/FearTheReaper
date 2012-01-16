@@ -13,6 +13,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
 
 import com.herocraftonline.fearthereaper.FearTheReaper;
+import com.herocraftonline.fearthereaper.ReaperMarkers;
 
 public class SpawnPoint {
     
@@ -23,6 +24,9 @@ public class SpawnPoint {
 
     public static void addSpawnPoint(Spawn point) {
         FearTheReaper.SpawnPointList.put(point.getName(), point);
+        if (FearTheReaper.markers != null) {
+            ReaperMarkers.updateMarker(point);
+        }
     }
 
     public static void loadSpawnPoint(File file) {
@@ -147,7 +151,10 @@ public class SpawnPoint {
 
     public static boolean deleteSpawnPoint(String name) {
         if (FearTheReaper.SpawnPointList.containsKey(name)) {
-            FearTheReaper.SpawnPointList.remove(name);
+            Spawn point = FearTheReaper.SpawnPointList.remove(name);
+            if (FearTheReaper.markers != null) {
+                ReaperMarkers.deleteMarker(point);
+            }
             File pointconfig = new File(FearTheReaper.pointsDirectory, name + ".cfg");
 
             if (pointconfig.exists()) {
