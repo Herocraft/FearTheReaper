@@ -27,6 +27,7 @@
         <javac srcdir="." destdir="bin" debug="on" debuglevel="lines,vars,source" classpathref="classpath" includeantruntime="false" />
         <copy file="src/plugin.yml" tofile="bin/plugin.yml" />
     	<copy file="src/config.yml" tofile="bin/config.yml" />
+    	<copy file="src/tomb.png" tofile="bin/tomb.png" />
         <replace file="bin/plugin.yml" token="b000" value="b${env.BUILD_NUMBER}" />
     </target>
   
