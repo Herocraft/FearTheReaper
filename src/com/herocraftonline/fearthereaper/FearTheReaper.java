@@ -14,11 +14,11 @@ import com.herocraftonline.fearthereaper.spawnpoint.Spawn;
 import com.herocraftonline.fearthereaper.spawnpoint.SpawnPoint;
 
 public class FearTheReaper extends JavaPlugin {
-    
+
     public static Logger log = Logger.getLogger("Minecraft");
     public static File pointsDirectory;
     public static FileConfiguration config;
-    public static HashMap<String, Spawn> SpawnPointList = new HashMap<String, Spawn>();
+    public static HashMap<String, Spawn> SpawnPointList = new HashMap<String, Spawn>();    
     
     public static HashMap<String, Spawn> getSpawnList() {
         return SpawnPointList;
@@ -32,6 +32,8 @@ public class FearTheReaper extends JavaPlugin {
     public void onEnable() {
         pointsDirectory = new File(getDataFolder(), "points");
         config = getConfig();
+        config.options().copyDefaults(true);
+        saveConfig();
         SpawnPoint.loadAllPoints();
 
 
