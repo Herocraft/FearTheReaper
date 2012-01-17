@@ -15,7 +15,7 @@ public class ReaperPlayerListener extends PlayerListener {
     }
 
     public void onPlayerRespawn(PlayerRespawnEvent event) {
-        if (GraveyardUtils.useBed(event.getPlayer())) {
+        if (GraveyardUtils.useBed(event.getPlayer()) && event.isBedSpawn()) {
             return;
         }
 

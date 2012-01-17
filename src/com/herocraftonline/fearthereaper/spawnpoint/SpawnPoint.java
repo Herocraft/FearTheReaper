@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -52,29 +51,6 @@ public class SpawnPoint {
             return FearTheReaper.SpawnPointList.get(name);
         }
         return null;
-    }
-
-    public static Spawn getClosest(Player player) {
-        Collection<Spawn> list = getWorldList(player).values();
-        if (list.isEmpty()) {
-            return null;
-        }
-        
-        Location loc = player.getLocation();
-        Spawn spawn = null;
-        int lastDist = -1;
-        for (Spawn point : list) {
-            //This should happen, but check just in case
-            if (!point.getWorld().equals(player.getWorld())) {
-                continue;
-            }
-            int newDist = distSq(loc, point);
-            if (newDist < lastDist || lastDist < 0) {
-                lastDist = newDist;
-                spawn = point;
-            }
-        }
-        return spawn;
     }
 
     public static Spawn getClosest(Player player, HashMap<String, Spawn> spawnList) {
@@ -125,7 +101,7 @@ public class SpawnPoint {
     public static Spawn getClosestAllowed(Player player) {
         HashMap<String, Spawn> allowed = new HashMap<String, Spawn>();
         for (Spawn point : FearTheReaper.getSpawnList().values()) {
-            if (player.hasPermission(("graveyard.spawn." + point.getGroup()).toLowerCase())) {
+            if (player.hasPermission("graveyard.spawn.*") || player.hasPermission(("graveyard.spawn." + point.getGroup()).toLowerCase())) {
                 allowed.put(point.getName(), point);
             }
         }
@@ -135,10 +111,9 @@ public class SpawnPoint {
 
     public static HashMap<String, Spawn> getWorldList(Player player) {
         HashMap<String, Spawn> worldPoints = new HashMap<String, Spawn>();
-        for (Spawn Spawns : FearTheReaper.SpawnPointList.values())
-        {
-            if (Spawns.getWorldName() == player.getWorld().getName()) {
-                worldPoints.put(Spawns.getName(), Spawns);
+        for (Spawn point : FearTheReaper.SpawnPointList.values()) {
+            if (point.getWorldName() == player.getWorld().getName()) {
+                worldPoints.put(point.getName(), point);
             }
         }
 

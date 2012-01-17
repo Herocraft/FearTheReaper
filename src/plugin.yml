@@ -15,3 +15,6 @@ permissions:
   graveyard.spawn.all:
     description: The default spawn group that all spawns are a part of
     default: true
+  graveyard.spawn.*:
+    description: Gives permissions to spawn at any graveyard
+    default: op
