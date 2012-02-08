@@ -1,3 +1,18 @@
+/* This file is part of FearTheReaper.
+
+    FearTheReaper is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    FearTheReaper is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with FearTheReaper.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.herocraftonline.fearthereaper.utils;
 
 import org.bukkit.Location;
@@ -7,7 +22,7 @@ import org.bukkit.entity.Player;
 import com.herocraftonline.fearthereaper.FearTheReaper;
 
 public class GraveyardUtils {
-    
+
     public static String makeString(String[] input) {
         String pointname = "";
         for (int i = 1; i < input.length; i++) pointname = pointname + input[i] + " ";
