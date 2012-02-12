@@ -19,7 +19,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
 import org.bukkit.entity.Player;
 
 import com.herocraftonline.fearthereaper.FearTheReaper;
@@ -29,139 +28,223 @@ import com.herocraftonline.fearthereaper.utils.GraveyardUtils;
 
 public class ReaperCommands implements CommandExecutor {
     public final FearTheReaper plugin;
-    private static String[] arg;
 
     public ReaperCommands(FearTheReaper instance) {
         this.plugin = instance;
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        arg = args;
-        Player player = null;
-        if ((sender instanceof Player)) {
-            player = (Player)sender;
-        }
         if (args.length == 0) {
             return false;
         }
 
-        if (graveyardCommand("closest", sender) && notConsole(sender)) {
-            Spawn point = SpawnPoint.getClosestAllowed(player);
-            commandLine(sender);
+        if (args[0].equalsIgnoreCase("closest")) {
+            closest(sender);
+        } else if (args[0].equalsIgnoreCase("info")) {
+            info(sender, args);
+        } else if (args[0].equalsIgnoreCase("list")) {
+            list(sender, args);
+        } else if (args[0].equalsIgnoreCase("tp")) {
+            teleport(sender, args);
+        } else if (args[0].equalsIgnoreCase("message")) {
+            message(sender, args);
+        } else if (args[0].equalsIgnoreCase("reload")) {
+            reload(sender);
+        } else if (args[0].equalsIgnoreCase("group")) {
+            group(sender, args);
+        } else if (args[0].equalsIgnoreCase("add")) {
+            add(sender, args);
+        } else if (args[0].equalsIgnoreCase("delete")) {
+            delete(sender, args);
+        }
 
-            if (point != null) {
-                sender.sendMessage(ChatColor.WHITE + "Closest spawn point is: " + ChatColor.RED + SpawnPoint.getClosestAllowed(player).getName());
+        return true;
+    }
+
+    private void closest(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            noConsole(sender);
+            return;
+        }
+        if (!sender.hasPermission("graveyard.command.closest")) {
+            noPermission(sender);
+            return;
+        }
+        Player player = (Player) sender;
+        Spawn point = SpawnPoint.getClosestAllowed(player);
+        commandLine(sender);
+
+        if (point != null) {
+            sender.sendMessage(ChatColor.WHITE + "Closest spawn point is: " + ChatColor.RED + SpawnPoint.getClosestAllowed(player).getName());
+        } else {
+            sender.sendMessage(ChatColor.WHITE + "Could not find the closest spawn point to your location.");
+        }
+
+        commandLine(sender);
+    }
+
+    private void info(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.info")) {
+            noPermission(sender);
+            return;
+        }
+        Spawn point;
+        if (args.length > 1) {
+            point = SpawnPoint.get(GraveyardUtils.makeString(args));
+            if (point == null) {
+                commandLine(sender);
+                sender.sendMessage("CHatColor.WHITE + Could not find the spawn point: " + args[1]);
+                commandLine(sender);
+                return;
+            }
+        } else {
+            if (!(sender instanceof Player)) {
+                noConsole(sender);
+                return;
             } else {
-                sender.sendMessage(ChatColor.WHITE + "Could not find the closest spawn point to your location.");
+                point = SpawnPoint.getClosestAllowed((Player) sender);
             }
-
-            commandLine(sender);
-            return true;
-        }
-
-        if (graveyardCommand("info", sender) && notConsole(sender)) {
-            Spawn point = SpawnPoint.getClosestAllowed(player);
-            commandLine(sender);
-            sender.sendMessage(ChatColor.GRAY + point.getName() + ": " + ChatColor.WHITE + Math.round(point.getX()) + ", " + Math.round(point.getY()) + ", " + Math.round(point.getZ()));
-            sender.sendMessage(ChatColor.WHITE + "Respawn Message: " + ChatColor.GREEN + point.getSpawnMessage());
-            sender.sendMessage(ChatColor.WHITE + "Group: " + ChatColor.GREEN + point.getGroup());
-            sender.sendMessage(ChatColor.WHITE + "Permission: " + ChatColor.GREEN + "'graveyard.spawn." + point.getGroup() + "'");
-            commandLine(sender);
-            return true;
-        }
-
-        if ((graveyardCommand("list", sender)) && (args.length == 1)) {
-            commandLine(sender);
-            for (Spawn point : FearTheReaper.SpawnPointList.values()) {
-                sender.sendMessage(ChatColor.GRAY + point.getName() + ": " + ChatColor.WHITE + Math.round(point.getX()) + ", " + Math.round(point.getY()) + ", " + Math.round(point.getZ()) + " : " + point.getWorldName());
+            if (point == null) {
+                commandLine(sender);
+                sender.sendMessage("ChatColor.WHITE + Could not find the closest spawn point.");
+                commandLine(sender);
+                return;
             }
-            commandLine(sender);
-            return true;
         }
+        commandLine(sender);
+        sender.sendMessage(ChatColor.GRAY + point.getName() + ": " + ChatColor.WHITE + Math.round(point.getX()) + ", " + Math.round(point.getY()) + ", " + Math.round(point.getZ()));
+        sender.sendMessage(ChatColor.WHITE + "Respawn Message: " + ChatColor.GREEN + point.getSpawnMessage());
+        sender.sendMessage(ChatColor.WHITE + "Group: " + ChatColor.GREEN + point.getGroup());
+        sender.sendMessage(ChatColor.WHITE + "Permission: " + ChatColor.GREEN + "'graveyard.spawn." + point.getGroup() + "'");
+        commandLine(sender);
+        return;
+    }
 
-        if ((graveyardCommand("tp", sender)) && (args.length == 1) && notConsole(sender)) {
+    private void list(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.list")) {
+            noPermission(sender);
+            return;
+        }
+        String world = null;
+        if (args.length > 1) {
+            world = args[1];
+        }
+        commandLine(sender);
+        for (Spawn point : FearTheReaper.SpawnPointList.values()) {
+            if (world != null && !point.getWorldName().equalsIgnoreCase(world)) {
+                continue;
+            }
+            sender.sendMessage(ChatColor.GRAY + point.getName() + ": " + ChatColor.WHITE + Math.round(point.getX()) + ", " + Math.round(point.getY()) + ", " + Math.round(point.getZ()) + " : " + point.getWorldName());
+        }
+        commandLine(sender);
+        return;
+    }
+
+    private void teleport(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.teleport")) {
+            noPermission(sender);
+            return;
+        } else if (!(sender instanceof Player)) {
+            noConsole(sender);
+            return;
+        }
+        if (args.length == 1) {
             commandLine(sender);
-            sender.sendMessage(ChatColor.GRAY + "/" + command.getName() + ChatColor.WHITE + " tp " + ChatColor.RED + "Name");
+            sender.sendMessage(ChatColor.GRAY + "/graveyard" + ChatColor.WHITE + " tp " + ChatColor.RED + "Name");
             sender.sendMessage(ChatColor.WHITE + "Teleports player to the specified spawn point.");
             commandLine(sender);
-            return true;
+            return;
         }
-
-        if ((graveyardCommand("tp", sender)) && (args.length > 1) && notConsole(sender)) {
-            String pointname = GraveyardUtils.makeString(args);
-            if (SpawnPoint.exists(pointname))
-            {
-                player.teleport(SpawnPoint.get(pointname).getLocation());
-                player.sendMessage("Teleporting to: " + pointname);
-            }
-            else {
-                player.sendMessage("Spawnpoint '" + pointname + "' does not exist.");
-            }
-            return true;
+        Player player = (Player) sender;
+        String pointname = GraveyardUtils.makeString(args);
+        if (SpawnPoint.exists(pointname)) {
+            player.teleport(SpawnPoint.get(pointname).getLocation());
+            player.sendMessage("Teleporting to: " + pointname);
+        } else {
+            player.sendMessage("Spawnpoint '" + pointname + "' does not exist.");
         }
+    }
 
-        if ((graveyardCommand("message", sender)) && (args.length > 1) && notConsole(sender)) {
-            String message = GraveyardUtils.makeString(args);
-            Spawn closest = SpawnPoint.getClosestAllowed(player);
-            closest.setSpawnMessage(message);
-            player.sendMessage(ChatColor.GRAY + closest.getName() + ChatColor.WHITE + " respawn message set to " + ChatColor.GREEN + message);
-            SpawnPoint.save(closest);
-            return true;
-        }
-
-        if ((graveyardCommand("reload", sender)) && (args.length == 1)) {
+    private void message(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.message")) {
+            noPermission(sender);
+            return;
+        } else if (args.length == 1) {
             commandLine(sender);
-
-            FearTheReaper.SpawnPointList.clear();
-            SpawnPoint.loadAllPoints();
-            sender.sendMessage(ChatColor.WHITE + "All spawn points have been reloaded.");
-            commandLine(sender);
-            return true;
-        }
-
-        if ((graveyardCommand("message", sender)) && (args.length == 1) && notConsole(sender)) {
-            commandLine(sender);
-            sender.sendMessage(ChatColor.GRAY + "/" + command.getName() + ChatColor.WHITE + " message " + ChatColor.RED + "Spawn Message");
+            sender.sendMessage(ChatColor.GRAY + "/graveyard" + ChatColor.WHITE + " message " + ChatColor.RED + "Spawn Message");
             sender.sendMessage(ChatColor.WHITE + "Changes the respawn message of the closest spawn point.");
             commandLine(sender);
-            return true;
+            return;
         }
-
-        if ((graveyardCommand("group", sender)) && (args.length > 1) && notConsole(sender)) {
-            Spawn closest = SpawnPoint.getClosestAllowed(player);
-            closest.setGroup(args[1]);
-            player.sendMessage(ChatColor.GRAY + closest.getName() + ChatColor.WHITE + " group set to " + ChatColor.GREEN + args[1]);
-            SpawnPoint.save(closest);
-            return true;
-        }
-
-        if ((graveyardCommand("group", sender)) && (args.length == 1) && notConsole(sender)) {
+        Player player = (Player) sender;
+        String message = GraveyardUtils.makeString(args);
+        Spawn closest = SpawnPoint.getClosestAllowed(player);
+        if (closest == null) {
             commandLine(sender);
-            sender.sendMessage(ChatColor.GRAY + "/" + command.getName() + ChatColor.WHITE + " message " + ChatColor.RED + "Spawn Message");
-            sender.sendMessage(ChatColor.WHITE + "Changes the group of the closest spawn point.");
+            sender.sendMessage(ChatColor.GRAY + "/graveyard" + ChatColor.WHITE + " message " + ChatColor.RED + "Spawn Message");
+            sender.sendMessage(ChatColor.WHITE + "Changes the respawn message of the closest spawn point.");
             commandLine(sender);
-            return true;
+            return;
         }
+        closest.setSpawnMessage(message);
+        player.sendMessage(ChatColor.GRAY + closest.getName() + ChatColor.WHITE + " respawn message set to " + ChatColor.GREEN + message);
+        SpawnPoint.save(closest);
+        return;
+    }
 
-        if ((graveyardCommand("group", sender)) && (args.length > 1) && notConsole(sender)) {
+    private void reload(CommandSender sender) {
+        if (!sender.hasPermission("graveyard.command.reload")) {
+            noPermission(sender);
+            return;
+        }
+        commandLine(sender);
+        FearTheReaper.SpawnPointList.clear();
+        SpawnPoint.loadAllPoints();
+        sender.sendMessage(ChatColor.WHITE + "All spawn points have been reloaded.");
+        commandLine(sender);
+        return;
+    }
+
+    private void group(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.group")) {
+            noPermission(sender);
+            return;
+        } else if (!(sender instanceof Player)) {
+            noConsole(sender);
+            return;
+        }
+        Player player = (Player) sender;
+        if (args.length > 1) {
             Spawn closest = SpawnPoint.getClosestAllowed(player);
             closest.setGroup(args[1]);
             player.sendMessage(ChatColor.GRAY + closest.getName() + ChatColor.WHITE + " group set to " + ChatColor.GREEN + args[1]);
             player.sendMessage(ChatColor.WHITE + "Permission is now " + ChatColor.GREEN + "'graveyard.spawn." + args[1] + "'");
             SpawnPoint.save(closest);
-            return true;
-        }
-
-        if ((graveyardCommand("add", sender)) && (args.length == 1) && notConsole(sender)) {
+            return;
+        } else {
             commandLine(sender);
-            sender.sendMessage(ChatColor.GRAY + "/" + command.getName() + ChatColor.WHITE + " add " + ChatColor.RED + "Name");
-            sender.sendMessage(ChatColor.WHITE + "Adds a new spawn point at current location.");
+            sender.sendMessage(ChatColor.GRAY + "/graveyard" + ChatColor.WHITE + " message " + ChatColor.RED + "Spawn Message");
+            sender.sendMessage(ChatColor.WHITE + "Changes the group of the closest spawn point.");
             commandLine(sender);
-            return true;
+            return;
         }
+    }
 
-        if ((graveyardCommand("add", sender)) && (args.length > 1) && notConsole(sender)) {
+    private void add(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.add")) {
+            noPermission(sender);
+            return;
+        } else if (!(sender instanceof Player)) {
+            noConsole(sender);
+            return;
+        }
+        Player player = (Player) sender;
+        if (args.length > 1) {
             String pointname = GraveyardUtils.makeString(args);
+            if (SpawnPoint.exists(pointname)) {
+                player.sendMessage(ChatColor.WHITE + "A spawn point with that name already exists!");
+                return;
+            }
             Spawn newpoint = new Spawn(pointname, player);
             SpawnPoint.save(newpoint);
             SpawnPoint.addSpawnPoint(newpoint);
@@ -169,18 +252,22 @@ public class ReaperCommands implements CommandExecutor {
             sender.sendMessage(ChatColor.DARK_GREEN + "Adding: " + ChatColor.GRAY + pointname);
             commandLine(sender);
             SpawnPoint.save(newpoint);
-            return true;
-        }
-
-        if ((graveyardCommand("delete", sender)) && (args.length == 1) && notConsole(sender)) {
+            return;
+        } else {
             commandLine(sender);
-            sender.sendMessage(ChatColor.GRAY + "/" + command.getName() + ChatColor.WHITE + " remove " + ChatColor.RED + "Name");
-            sender.sendMessage(ChatColor.WHITE + "Permenently deletes specified spawn point.");
+            sender.sendMessage(ChatColor.GRAY + "/graveyard" + ChatColor.WHITE + " add " + ChatColor.RED + "Name");
+            sender.sendMessage(ChatColor.WHITE + "Adds a new spawn point at current location.");
             commandLine(sender);
-            return true;
+            return;
         }
+    }
 
-        if ((graveyardCommand("delete", sender)) && (args.length > 1)) {
+    private void delete(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("graveyard.command.add")) {
+            noPermission(sender);
+            return;
+        } 
+        if (args.length > 1) {
             String pointname = GraveyardUtils.makeString(args);
             if (SpawnPoint.deleteSpawnPoint(pointname)) {
                 commandLine(sender);
@@ -188,32 +275,31 @@ public class ReaperCommands implements CommandExecutor {
                 commandLine(sender);
             } else {
                 commandLine(sender);
-                sender.sendMessage(ChatColor.DARK_GREEN + "Deleting: " + ChatColor.GRAY + pointname);
                 sender.sendMessage(ChatColor.RED + "Error. Point does not exist.");
                 commandLine(sender);
             }
-            return true;
+            return;
+        } else {
+            commandLine(sender);
+            sender.sendMessage(ChatColor.GRAY + "/graveyard" + ChatColor.WHITE + " remove " + ChatColor.RED + "Name");
+            sender.sendMessage(ChatColor.WHITE + "Permenently deletes specified spawn point.");
+            commandLine(sender);
+            return;
         }
-
-        return true;
     }
-
-    private boolean graveyardCommand(String string, CommandSender sender) {
-        return (arg[0].equalsIgnoreCase(string)) && ((sender.hasPermission("graveyard.command." + string)));
-    }
-
     private void commandLine(CommandSender sender) {
         sender.sendMessage(ChatColor.DARK_GREEN + "*--------------------------------------*");
     }
 
-    private boolean notConsole(CommandSender sender) {
-        if (!(sender instanceof ColouredConsoleSender)) {
-            return true;
-        }
+    private void noPermission(CommandSender sender) {
+        commandLine(sender);
+        sender.sendMessage(ChatColor.WHITE + "Sorry you do not have permission to use that command.");
+        commandLine(sender);
+    }
 
+    private void noConsole(CommandSender sender) {
         commandLine(sender);
         sender.sendMessage(ChatColor.WHITE + "Sorry you cannot use that command from the console.");
         commandLine(sender);
-        return false;
     }
 }
