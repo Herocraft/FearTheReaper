@@ -18,3 +18,20 @@ permissions:
   graveyard.spawn.*:
     description: Gives permissions to spawn at any graveyard
     default: op
+  graveyard.command.admin:
+    description: Gives permission to the admin commands
+    default: op
+    children:
+      graveyard.command.add: true
+      graveyard.command.tp: true
+      graveyard.command.message: true
+      graveyard.command.reload: true
+      graveyard.command.group: true
+      graveyard.command.delete: true
+  graveyard.command.user:
+    description: Gives permission for the user commands
+    default: true
+    children:
+      graveyard.command.closest: true
+      graveyard.command.info: true
+      graveyard.command.list: true   
