@@ -32,6 +32,9 @@ import com.herocraftonline.fearthereaper.ReaperMarkers;
 public class SpawnPoint {
     
     public static void loadAllPoints() {
+        if (!FearTheReaper.pointsDirectory.exists()) {
+            return;
+        }
         for (File file : FearTheReaper.pointsDirectory.listFiles())
             loadSpawnPoint(file);
     }
