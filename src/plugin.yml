@@ -1,5 +1,5 @@
 name: FearTheReaper
-version: 1.0.0-b000
+version: 1.0.1-b000
 main: com.herocraftonline.fearthereaper.FearTheReaper
 author: Sleaker
 softdepends: [ dynmap ]
