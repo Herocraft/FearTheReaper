@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.dynmap.DynmapAPI;
@@ -54,7 +52,7 @@ public class FearTheReaper extends JavaPlugin {
         saveConfig();
         SpawnPoint.loadAllPoints();
 
-        getServer().getPluginManager().registerEvent(Type.PLAYER_RESPAWN, new ReaperPlayerListener(this), Priority.High, this);
+        getServer().getPluginManager().registerEvents(new ReaperPlayerListener(), this);
 
         log.info("[" + getDescription().getName() + "] v" + getDescription().getVersion() + " loaded successfully!");
 

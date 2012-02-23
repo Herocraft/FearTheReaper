@@ -15,20 +15,20 @@
  */
 package com.herocraftonline.fearthereaper;
 
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import com.herocraftonline.fearthereaper.spawnpoint.Spawn;
 import com.herocraftonline.fearthereaper.spawnpoint.SpawnPoint;
 import com.herocraftonline.fearthereaper.utils.GraveyardUtils;
 
-public class ReaperPlayerListener extends PlayerListener {
-    public static FearTheReaper plugin;
+public class ReaperPlayerListener implements Listener {
 
-    public ReaperPlayerListener(FearTheReaper instance) {
-        plugin = instance;
-    }
+    public ReaperPlayerListener() {   }
 
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         if (GraveyardUtils.useBed(event.getPlayer()) && event.isBedSpawn()) {
             return;
