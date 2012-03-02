@@ -2,7 +2,7 @@ name: FearTheReaper
 version: 1.0.2-b000
 main: com.herocraftonline.fearthereaper.FearTheReaper
 author: Sleaker
-softdepends: [ dynmap ]
+depend: [ dynmap ]
 commands:
   graveyard:
     description: Graveyard Commands
