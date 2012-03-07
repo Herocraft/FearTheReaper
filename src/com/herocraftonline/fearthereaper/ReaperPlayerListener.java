@@ -40,7 +40,7 @@ public class ReaperPlayerListener implements Listener {
                 if (closest == null) {
                     return;
                 } else if (!closest.getSpawnMessage().equalsIgnoreCase("none")) {
-                    event.getPlayer().sendMessage(closest.getSpawnMessage());
+                    event.getPlayer().sendMessage(GraveyardUtils.replaceColors(closest.getSpawnMessage()));
                 }
                 event.setRespawnLocation(closest.getLocation());
             }

@@ -47,4 +47,8 @@ public class GraveyardUtils {
         }
         return false;
     }
+    
+    public static String replaceColors(String message) {
+        return message.replaceAll("(?i)&([a-fk0-9])", "\u00A7$1");
+    }
 }

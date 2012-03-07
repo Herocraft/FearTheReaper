@@ -113,7 +113,7 @@ public class ReaperCommands implements CommandExecutor {
         }
         commandLine(sender);
         sender.sendMessage(ChatColor.GRAY + point.getName() + ": " + ChatColor.WHITE + Math.round(point.getX()) + ", " + Math.round(point.getY()) + ", " + Math.round(point.getZ()));
-        sender.sendMessage(ChatColor.WHITE + "Respawn Message: " + ChatColor.GREEN + point.getSpawnMessage());
+        sender.sendMessage(ChatColor.WHITE + "Respawn Message: " + GraveyardUtils.replaceColors(point.getSpawnMessage()));
         sender.sendMessage(ChatColor.WHITE + "Group: " + ChatColor.GREEN + point.getGroup());
         sender.sendMessage(ChatColor.WHITE + "Permission: " + ChatColor.GREEN + "'graveyard.spawn." + point.getGroup() + "'");
         commandLine(sender);
