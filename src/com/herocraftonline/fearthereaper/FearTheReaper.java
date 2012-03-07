@@ -60,7 +60,7 @@ public class FearTheReaper extends JavaPlugin {
 
         Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
         if (dm != null) {
-            markers = new ReaperMarkers(this, (DynmapAPI) dm);
+            this.getServer().getScheduler().scheduleSyncDelayedTask(this, new ReaperMarkerSetup(this, (DynmapAPI) dm), 5);
         }
     }
 
@@ -72,5 +72,21 @@ public class FearTheReaper extends JavaPlugin {
 
     public static boolean isBedsEnabled() {
         return FearTheReaper.config.getBoolean("enable-beds", false);
+    }
+    
+    public class ReaperMarkerSetup implements Runnable {
+
+        private final DynmapAPI dm;
+        private final FearTheReaper plugin;
+        
+        public ReaperMarkerSetup(FearTheReaper plugin, DynmapAPI dm) {
+            this.dm = dm;
+            this.plugin = plugin;
+        }
+        
+        @Override
+        public void run() {
+            markers = new ReaperMarkers(plugin, dm);
+        }
     }
 }
