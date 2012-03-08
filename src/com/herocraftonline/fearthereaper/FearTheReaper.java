@@ -58,7 +58,7 @@ public class FearTheReaper extends JavaPlugin {
 
         getCommand("graveyard").setExecutor(new ReaperCommands(this));
 
-        Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
+        final Plugin dm = getServer().getPluginManager().getPlugin("dynmap");
         if (dm != null) {
             this.getServer().getScheduler().scheduleSyncDelayedTask(this, new ReaperMarkerSetup(this, (DynmapAPI) dm), 5);
         }
