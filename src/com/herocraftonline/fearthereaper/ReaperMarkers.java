@@ -40,9 +40,11 @@ public class ReaperMarkers {
         if (mApi == null) {
             return;
         }
-        
-        InputStream in = getClass().getResourceAsStream("tomb.png");
-        icon = mApi.createMarkerIcon("tomb", "Graveyards", in);
+        icon = mApi.getMarkerIcon("tomb");
+        if (icon == null) {
+            InputStream in = getClass().getResourceAsStream("/tomb.png");
+            icon = mApi.createMarkerIcon("tomb", "Graveyards", in);
+        }
 
         set = mApi.getMarkerSet("graveyard.markerset");
         if (set == null) {
@@ -74,7 +76,7 @@ public class ReaperMarkers {
         }
         set.createMarker(point.getName(), point.getName(), point.getWorldName(), point.getX(), point.getY(), point.getZ(), icon, true);
     }
-    
+
     public static void deleteMarker(Spawn point) {
         Marker m = set.findMarker(point.getName());
         if (m != null) {
