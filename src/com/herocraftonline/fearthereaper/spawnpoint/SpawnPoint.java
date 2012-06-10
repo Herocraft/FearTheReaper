@@ -56,7 +56,7 @@ public class SpawnPoint {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InvalidConfigurationException e) {
-            e.printStackTrace();
+            FearTheReaper.log.warning(e.getMessage());
         }
     }
 

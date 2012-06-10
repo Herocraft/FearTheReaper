@@ -144,9 +144,10 @@ public class Spawn extends YamlConfiguration {
     @Override
     public void load(File file) throws FileNotFoundException, IOException, InvalidConfigurationException {
         super.load(file);
-        World world = Bukkit.getWorld(this.getString("world"));
+        String worldName = this.getString("world");
+        World world = Bukkit.getWorld(worldName);
         if (world == null) {
-            throw new InvalidConfigurationException("World could not be detected properly.");
+            throw new InvalidConfigurationException("World:" + worldName + " could not be detected properly, or was not loaded.");
         }
         this.location = new Location(world, getX(), getY(), getZ());
         this.spawnFile = new File(FearTheReaper.pointsDirectory, this.getName() + ".yml");
