@@ -148,7 +148,7 @@ public class SpawnPoint {
             if (FearTheReaper.markers != null) {
                 ReaperMarkers.deleteMarker(point);
             }
-            File pointconfig = new File(FearTheReaper.pointsDirectory, name + ".cfg");
+            File pointconfig = new File(FearTheReaper.pointsDirectory, name + ".yml");
 
             if (pointconfig.exists()) {
                 pointconfig.delete();
